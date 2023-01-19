@@ -1,0 +1,26 @@
+@import "./calculator.css";
+
+:root {
+  --color-background: rgb(53, 53, 53);
+  --color-text: rgb(251, 251, 242);
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-size: 1.5rem;
+
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
+}
+
+#app {
+  max-width: 50rem;
+  margin: 0 auto;
+}
