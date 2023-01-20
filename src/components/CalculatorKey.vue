@@ -6,23 +6,26 @@ import type { CalculatorKeyInterface } from "./Calculator.d";
 // Tips to type the props:
 // https://github.com/vuejs/core/issues/4294#issuecomment-1025210436
 // https://github.com/vuejs/core/issues/4294#issuecomment-1350678720
-const { props } = defineProps<{ props: CalculatorKeyInterface }>();
+
+// const { props } = defineProps<{ props: CalculatorKeyInterface }>(); // this is working but not valid https://eslint.vuejs.org/rules/no-setup-props-destructure.html
+
+const props = defineProps<{ props: CalculatorKeyInterface }>();
 
 // Type the emitted event and replace $emit
 const emit = defineEmits<{ (event: "onPressed", value: CalculatorKeyInterface): void }>();
 
 const getKeyClass = computed<string>(() => {
-  if (props.value === "0") {
+  if (props.props.value === "0") {
     return `calculator__key__digit-0`;
   } else {
-    return `calculator__key__${props.type}`;
+    return `calculator__key__${props.props.type}`;
   }
 });
 </script>
 
 <template>
-  <div class="calculator__key" v-bind:class="[getKeyClass, props.isSelected ? 'calculator__key__selected' : '']" v-on:click="emit('onPressed', props)">
-    {{ props.value }}
+  <div class="calculator__key" v-bind:class="[getKeyClass, props.props.isSelected ? 'calculator__key__selected' : '']" v-on:click="emit('onPressed', props.props)">
+    {{ props.props.value }}
   </div>
 </template>
 

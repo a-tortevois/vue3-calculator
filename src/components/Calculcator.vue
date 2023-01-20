@@ -6,6 +6,8 @@ import CalculatorHistory from "./CalculatorHistory.vue";
 import CalculatorScreen from "./CalculatorScreen.vue";
 import CalculatorKey from "./CalculatorKey.vue";
 
+const MAX_SCREEN_LENGTH = 11;
+
 const KEY_MAP: CalculatorKeyMapInterface = {
   DIGIT_0: { key: "0", value: "0", type: CalculatorKeyType.Digit },
   DIGIT_1: { key: "1", value: "1", type: CalculatorKeyType.Digit },
@@ -36,6 +38,17 @@ const state = reactive<CalculatorStateInterface>({
   lastKeyPressed: null,
 });
 
+const formatScreenValue = (value: string) => {
+  if (value.length < MAX_SCREEN_LENGTH) {
+    return value;
+  } else if (value.indexOf(KEY_MAP.DIGIT_COMMA.value) === -1) {
+    // TODO complete for big numbers ...
+    return value;
+  } else {
+    return value.slice(0, MAX_SCREEN_LENGTH);
+  }
+};
+
 const isSelected = ({ value }: CalculatorKeyInterface) => {
   if (!state.lastKeyPressed) {
     return false;
@@ -51,10 +64,10 @@ const lastKeyPressedIsOperator = () => {
 };
 
 const addDigit = (digit: string) => {
-  if (state.screen.toString().length > 8) {
+  if (state.screen.toString().length > MAX_SCREEN_LENGTH - 1 && !lastKeyPressedIsOperator()) {
     return;
   }
-  if (digit === KEY_MAP.DIGIT_COMMA.value && state.screen.toString().indexOf(KEY_MAP.DIGIT_COMMA.value) >= 0) {
+  if (digit === KEY_MAP.DIGIT_COMMA.value && state.screen.includes(KEY_MAP.DIGIT_COMMA.value)) {
     return;
   }
   if (state.screen === KEY_MAP.DIGIT_0.value || lastKeyPressedIsOperator()) {
@@ -90,7 +103,7 @@ const doOperation = () => {
       break;
     }
   }
-  state.screen = state.result.toString();
+  state.screen = formatScreenValue(state.result.toString());
 };
 
 const onPressed = (key: CalculatorKeyInterface) => {
@@ -111,12 +124,12 @@ const onPressed = (key: CalculatorKeyInterface) => {
         break;
       }
       case KEY_MAP.FUN_INV.value: {
-        state.screen = (-parseFloat(state.screen)).toString();
+        state.screen = formatScreenValue((-parseFloat(state.screen)).toString());
         break;
       }
 
       case KEY_MAP.FUN_PERCENT.value: {
-        state.screen = (parseFloat(state.screen) * 0.01).toString();
+        state.screen = formatScreenValue((parseFloat(state.screen) * 0.01).toString());
         break;
       }
     }
@@ -125,7 +138,7 @@ const onPressed = (key: CalculatorKeyInterface) => {
 };
 
 window.addEventListener("keydown", (event) => {
-  for (const [_, key] of Object.entries(KEY_MAP)) {
+  for (const [, key] of Object.entries(KEY_MAP)) {
     if (event.key === key.key) {
       onPressed(key);
       event.preventDefault();
